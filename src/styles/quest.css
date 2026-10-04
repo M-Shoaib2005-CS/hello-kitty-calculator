@@ -1,0 +1,247 @@
+.path-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.path-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.path-tab,
+.path-tabs .chip {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.path-tab[aria-disabled="true"] {
+  opacity: 0.55;
+}
+
+.path-head .bar,
+.play .bar {
+  height: 14px;
+  margin: 12px 0 6px;
+  background: var(--bar-track);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar > i {
+  display: block;
+  height: 100%;
+  background: var(--pink);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.path-meta {
+  font-weight: 700;
+  color: var(--muted) !important;
+  font-size: 0.9rem !important;
+}
+
+.path-note {
+  margin-top: 6px;
+  font-size: 0.85rem !important;
+}
+
+.trail {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+
+.chapter {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.chapter-btn {
+  width: 100%;
+  min-height: var(--touch);
+  padding: 8px 14px;
+  border-radius: var(--radius-btn);
+  border: 2.5px dashed var(--ink);
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.trail-item {
+  transform: translateX(var(--x, 0));
+}
+
+.node {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  border-bottom-width: 6px;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  line-height: 1;
+}
+
+.node:active {
+  transform: translateY(2px);
+}
+
+.node-stars {
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  color: var(--pink-deep);
+  min-height: 10px;
+}
+
+.node.done {
+  background: var(--green);
+}
+
+.node.current {
+  background: var(--pink);
+  color: #fff;
+  box-shadow: 0 0 0 5px var(--blush);
+}
+
+.node.current .node-stars {
+  color: #fff;
+}
+
+.node.boss {
+  width: 80px;
+  height: 80px;
+  background: var(--yellow);
+  border-bottom-color: var(--yellow-edge);
+}
+
+.node.boss.done {
+  background: var(--green);
+}
+
+.node.locked {
+  background: var(--locked);
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.story-text {
+  font-size: 1.1rem !important;
+  margin: 8px 0 4px;
+}
+
+.play-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.play-tag {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.play-count {
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 42px;
+  text-align: right;
+}
+
+.prompt {
+  font-size: clamp(1.3rem, 5.5vw, 1.8rem) !important;
+  margin: 14px 0 16px !important;
+  overflow-wrap: anywhere;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.choice {
+  min-height: 62px;
+  padding: 8px 6px;
+  border-radius: var(--radius-btn);
+  border: 2.5px solid var(--ink);
+  border-bottom: 4px solid var(--blue-edge);
+  background: var(--blue);
+  color: var(--ink);
+  font-size: 1.15rem;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.choice:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.choice:disabled {
+  cursor: default;
+}
+
+.choice.right {
+  background: var(--green);
+  border-bottom-color: #4fb575;
+}
+
+.choice.wrong {
+  background: var(--blush);
+  border-bottom-color: var(--pink-deep);
+}
+
+.feedback {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 2.5px solid var(--ink);
+  text-align: left;
+  background: var(--paper-2);
+}
+
+.feedback strong,
+.feedback span {
+  display: block;
+}
+
+.feedback span {
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.feedback.ok {
+  background: var(--green);
+}
+
+.feedback.ok span {
+  color: var(--ink);
+}
+
+.big-stars {
+  font-size: 2.2rem !important;
+  letter-spacing: 6px;
+  color: var(--pink-deep) !important;
+  margin: 4px 0 8px;
+}
+
+@media (min-width: 720px) {
+  .choices {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

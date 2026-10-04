@@ -1,0 +1,391 @@
+.calc-screen {
+  /* Ears stick up 34px; keep them clear of the top bar + mute. */
+  padding-top: 52px;
+}
+
+.calc-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.ears {
+  position: absolute;
+  top: -34px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ear {
+  width: 64px;
+  height: 64px;
+  background: var(--paper-2);
+  border: 4px solid var(--ink);
+  border-radius: 50% 50% 20% 20%;
+  position: relative;
+}
+
+.ear::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  background: var(--ear-in);
+  border-radius: 50% 50% 20% 20%;
+}
+
+.calc {
+  position: relative;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: var(--radius-card);
+  padding: 26px 18px 18px;
+  box-shadow:
+    0 14px 0 -4px var(--blush),
+    0 18px 30px var(--shadow-pink);
+}
+
+.face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 6px;
+  position: relative;
+  height: 34px;
+}
+
+.whiskers-left,
+.whiskers-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.whiskers-left {
+  left: 8px;
+}
+
+.whiskers-right {
+  right: 8px;
+}
+
+.whiskers-left span,
+.whiskers-right span {
+  display: block;
+  width: 34px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.whiskers-right span {
+  align-self: flex-end;
+}
+
+.eye {
+  width: 9px;
+  height: 9px;
+  background: var(--ink);
+  border-radius: 50%;
+}
+
+.nose {
+  width: 12px;
+  height: 9px;
+  background: var(--nose);
+  border-radius: 50% 50% 60% 60%;
+  border: 2px solid var(--ink);
+}
+
+.bow {
+  position: absolute;
+  top: -8px;
+  right: 36px;
+  width: 30px;
+  height: 20px;
+}
+
+.bow::before,
+.bow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 14px;
+  height: 20px;
+  background: var(--bow);
+  border: 2.5px solid var(--ink);
+  border-radius: 4px 10px 10px 4px;
+}
+
+.bow::before {
+  left: 0;
+  transform: rotate(-14deg);
+}
+
+.bow::after {
+  right: 0;
+  transform: rotate(14deg) scaleX(-1);
+}
+
+.bow-knot {
+  position: absolute;
+  top: -8px;
+  right: 47px;
+  width: 9px;
+  height: 9px;
+  background: var(--gold);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.display {
+  background: var(--display);
+  border-radius: 18px;
+  padding: 18px 16px 14px;
+  margin: 14px 0 16px;
+  text-align: right;
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.display .prev {
+  color: var(--display-prev);
+  font-size: 0.85rem;
+  min-height: 18px;
+  opacity: 0.85;
+  overflow-wrap: anywhere;
+}
+
+.display .curr {
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.55rem, 7vw, 2.1rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pad button {
+  min-height: 56px;
+  height: auto;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: 1.15rem;
+  cursor: pointer;
+  color: var(--ink);
+  transition:
+    transform 0.08s ease,
+    border-bottom-width 0.08s ease;
+}
+
+.pad button:active {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+}
+
+.num {
+  background: var(--paper-2);
+  border: 2.5px solid var(--ink) !important;
+  border-bottom: 4px solid var(--ink) !important;
+}
+
+.op {
+  background: var(--blue);
+  border: 2.5px solid var(--ink) !important;
+  border-bottom: 4px solid var(--blue-edge) !important;
+}
+
+.fn {
+  background: var(--yellow);
+  border: 2.5px solid var(--ink) !important;
+  border-bottom: 4px solid var(--yellow-edge) !important;
+}
+
+.eq {
+  background: var(--pink);
+  border: 2.5px solid var(--ink) !important;
+  border-bottom: 4px solid var(--pink-deep) !important;
+  grid-column: span 2;
+  color: #fff;
+}
+
+.paws {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  opacity: 0.55;
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.mode-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chip {
+  min-height: 40px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 2.5px solid var(--ink);
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.chip.on {
+  background: var(--pink);
+  color: #fff;
+}
+
+.chip.angle {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.sci-pad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sci-pad .sci {
+  min-height: 44px;
+  border-radius: 14px;
+  border: 2.5px solid var(--ink);
+  border-bottom: 4px solid var(--blue-edge);
+  background: var(--green);
+  color: var(--ink);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.sci-pad .sci:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.calc.is-sci .pad button {
+  min-height: 48px;
+}
+
+@keyframes boogie {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-12deg);
+  }
+  25%,
+  75% {
+    transform: translateY(-22px) rotate(12deg) scale(1.1);
+  }
+  50% {
+    transform: translateY(0) rotate(-12deg);
+  }
+}
+
+@media (max-width: 360px) {
+  .calc {
+    padding: 22px 12px 14px;
+  }
+
+  .pad {
+    gap: 8px;
+  }
+
+  .pad button {
+    min-height: 52px;
+    font-size: 1.05rem;
+  }
+
+  .ears {
+    padding: 0 18px;
+  }
+
+  .ear {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (min-width: 600px) {
+  .calc-wrap {
+    max-width: 480px;
+  }
+
+  .pad button {
+    min-height: 64px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .calc-wrap {
+    max-width: 520px;
+  }
+}
+
+/* Short landscape: keep the pad thumb-sized without horizontal scroll. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .calc-screen {
+    padding-top: 22px;
+  }
+
+  .calc {
+    padding: 18px 16px 12px;
+  }
+
+  .display {
+    min-height: 56px;
+    padding: 10px 14px 8px;
+    margin: 8px 0 10px;
+  }
+
+  .display .curr {
+    font-size: 1.5rem;
+  }
+
+  .pad {
+    gap: 8px;
+  }
+
+  .pad button {
+    min-height: 48px;
+  }
+
+  .ears,
+  .bow,
+  .bow-knot,
+  .paws {
+    display: none;
+  }
+
+  .face {
+    height: 22px;
+    margin-bottom: 0;
+  }
+}

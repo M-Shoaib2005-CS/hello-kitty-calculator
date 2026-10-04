@@ -1,0 +1,371 @@
+.ico {
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: -0.2em;
+}
+
+.ico.inline {
+  vertical-align: -0.12em;
+}
+
+.star-on {
+  color: #f5a524;
+}
+
+.star-off {
+  color: var(--muted);
+  opacity: 0.55;
+}
+
+/* chips, buttons and labels that now hold an icon + text */
+.chip,
+.path-tab,
+.chapter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.chapter-btn {
+  display: flex;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.chapter-btn span {
+  min-width: 0;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+}
+
+.nav-ico {
+  display: grid;
+  place-items: center;
+  height: 24px;
+}
+
+.boot-kitty {
+  display: grid;
+  place-items: center;
+}
+
+.floaty {
+  color: var(--pink);
+}
+
+/* round emblem used on cards in place of a big emoji */
+.badge {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--blush);
+  color: var(--pink-deep);
+  border: 3px solid var(--ink);
+  border-bottom-width: 6px;
+}
+
+.badge.win {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+html[data-theme="night"] .badge {
+  color: #fff;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--blush);
+  border: 3px solid var(--ink);
+  border-bottom-width: 6px;
+}
+
+.node {
+  line-height: 0;
+}
+
+.node-n {
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.node-stars {
+  display: flex;
+  gap: 1px;
+  line-height: 0;
+  min-height: 12px;
+}
+
+.node.current .node-stars .star-on,
+.node.current .star-off {
+  color: #fff;
+}
+
+.node.boss .node-n {
+  color: #b8860b;
+}
+
+.node.locked .node-n {
+  color: var(--muted);
+}
+
+.play-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.feedback strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback.ok strong {
+  color: #1d6b3e;
+}
+
+html[data-theme="night"] .feedback.ok strong {
+  color: #0f3d22;
+}
+
+.feedback.no strong {
+  color: var(--pink-deep);
+}
+
+.big-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 6px 0 10px;
+}
+
+.big-stars .star-on {
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+}
+
+.star {
+  display: grid;
+  place-items: center;
+}
+
+/* hat picker: each tile is a mini kitty wearing the hat */
+.hat-ico {
+  position: relative;
+  display: grid;
+  place-items: center;
+  line-height: 0;
+}
+
+.hat-ico.locked .kitty {
+  filter: grayscale(0.75);
+  opacity: 0.6;
+}
+
+.lockbadge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+.hat {
+  min-height: 96px;
+  gap: 2px;
+}
+
+.hat small {
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.prog-list li {
+  color: var(--ink);
+}
+
+.prog-list li .ico {
+  color: var(--pink-deep);
+}
+
+html[data-theme="night"] .prog-list li .ico {
+  color: var(--pink-hot);
+}
+
+.paws {
+  align-items: center;
+  gap: 8px;
+}
+
+/* lessons and hints */
+.chapter-learn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 4px 0;
+}
+
+.chapter-learn .skills {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--ink-soft);
+  min-width: 0;
+}
+
+.chapter-learn .skills .ico {
+  margin-top: 1px;
+  color: var(--pink-deep);
+}
+
+.chapter-learn .chip {
+  flex: 0 0 auto;
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.lesson-text {
+  font-size: 1.1rem !important;
+  margin: 6px 0 12px;
+}
+
+.example {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--paper-2);
+  border: 2.5px dashed var(--pink);
+  color: var(--ink);
+}
+
+.example b {
+  font-family: var(--font-display);
+  color: var(--pink-deep);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.example span {
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 2px;
+}
+
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+}
+
+.dots i.on {
+  background: var(--pink);
+}
+
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pager .wide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pager .wide:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.hint-btn {
+  width: 100%;
+  margin-top: 12px;
+  min-height: 44px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-btn);
+  border: 2.5px dashed var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.hint-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.hint {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--yellow);
+  border: 2.5px solid var(--ink);
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.hint .ico {
+  margin-top: 1px;
+}
+
+.choice.gone {
+  opacity: 0.25;
+  text-decoration: line-through;
+}

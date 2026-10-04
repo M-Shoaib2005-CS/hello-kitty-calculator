@@ -1,0 +1,31 @@
+{
+  "name": "catularor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline kids + students math app: kitty calculator (basic + scientific), Math Quest, formula catalogue.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "assets": "capacitor-assets generate --android --iconBackgroundColor '#fff9fb' --iconBackgroundColorDark '#2a1f28' --splashBackgroundColor '#fff9fb' --splashBackgroundColorDark '#1a1520'",
+    "test": "tsx tests/run.ts",
+    "cap:add": "cap add android",
+    "cap:sync": "npm run build && cap sync android",
+    "cap:open": "cap open android",
+    "android:release": "npm run build && cap sync android && cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@fontsource/baloo-2": "^5.2.5",
+    "@fontsource/nunito": "^5.2.5"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

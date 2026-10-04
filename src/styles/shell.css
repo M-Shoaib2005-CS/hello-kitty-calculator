@@ -1,0 +1,304 @@
+.app {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 20% 20%, var(--bg-a) 0%, transparent 50%),
+    var(--bg-c);
+}
+
+.boot.is-done {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.boot-card {
+  text-align: center;
+}
+
+.boot-kitty {
+  font-size: 72px;
+  line-height: 1;
+  animation: boogie 0.7s ease-in-out infinite;
+}
+
+.boot-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.boot-sub {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.topbar-kicker {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  justify-self: start;
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.icon-btn {
+  justify-self: end;
+  min-width: var(--touch);
+  min-height: var(--touch);
+  border-radius: 16px;
+  background: var(--paper-2);
+  border: 2.5px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+  cursor: pointer;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.icon-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* The only scroller. The tab bar sits below it as a normal flex item, so nothing overlaps. */
+.main {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding: 4px max(16px, calc((100% - 720px) / 2)) 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  outline: none;
+}
+
+.view {
+  display: none;
+}
+
+.view.on {
+  display: block;
+  animation: fade-in 0.22s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nav {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: var(--nav-bg);
+  border-top: 3px solid var(--ink);
+}
+
+.nav-btn {
+  min-height: var(--touch);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  line-height: 1.1;
+  padding: 4px 2px;
+}
+
+.nav-ico {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.nav-btn.on {
+  background: var(--pink);
+  color: #fff;
+}
+
+.nav-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.card {
+  background: var(--paper);
+  border: var(--outline) solid var(--ink);
+  border-radius: 30px;
+  padding: 20px 18px;
+  box-shadow:
+    0 10px 0 -4px var(--blush),
+    0 16px 26px var(--shadow-pink);
+  text-align: center;
+}
+
+.card h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin: 8px 0 6px;
+}
+
+.card p {
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.empty-ico {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 12px;
+  min-height: var(--touch);
+  border-radius: var(--radius-btn);
+  font-size: 1.05rem;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--yellow);
+  border: 2.5px solid var(--ink);
+  border-bottom: 4px solid var(--yellow-edge);
+}
+
+.wide.pink {
+  background: var(--pink);
+  color: #fff;
+  border-bottom-color: var(--pink-deep);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  padding: 12px 0;
+  border-bottom: 2px dashed var(--blush);
+}
+
+.toggle-row:last-of-type {
+  border-bottom: 0;
+}
+
+.toggle-row strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.toggle-row span {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.switch {
+  flex: 0 0 auto;
+  min-width: 56px;
+  min-height: var(--touch);
+  border-radius: 999px;
+  border: 2.5px solid var(--ink);
+  background: var(--paper-2);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.switch.on {
+  background: var(--pink);
+  color: #fff;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+
+.stat {
+  background: var(--paper-2);
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 12px 8px;
+}
+
+.stat b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+}
+
+.stat small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@media (min-width: 720px) {
+  .main {
+    padding-left: max(24px, calc((100% - 900px) / 2));
+    padding-right: max(24px, calc((100% - 900px) / 2));
+  }
+
+  .topbar-title {
+    font-size: 1.55rem;
+  }
+
+  .nav {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+  }
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fff9fb" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="description"
+      content="Catularor — a cute offline kitty calculator and maths quest for kids and students."
+    />
+    <title>Catularor</title>
+  </head>
+  <body>
+    <div id="floaties" aria-hidden="true"></div>
+
+    <div id="boot" class="boot" role="status" aria-live="polite">
+      <div class="boot-card">
+        <div class="boot-kitty" id="bootKitty" aria-hidden="true"></div>
+        <p class="boot-title">Catularor</p>
+        <p class="boot-sub">warming up whiskers…</p>
+      </div>
+    </div>
+
+    <div id="app" class="app" hidden>
+      <header class="topbar">
+        <p class="topbar-kicker" id="topKicker">meow-th</p>
+        <h1 class="topbar-title" id="topTitle">Catularor</h1>
+        <button
+          type="button"
+          class="icon-btn"
+          id="muteBtn"
+          aria-label="Mute sounds"
+          aria-pressed="false"
+        >
+        </button>
+      </header>
+
+      <main id="main" class="main" tabindex="-1">
+        <section
+          class="view on"
+          id="view-calc"
+          data-screen="calc"
+          aria-label="Calculator"
+        ></section>
+        <section
+          class="view"
+          id="view-quest"
+          data-screen="quest"
+          aria-label="Math Quest"
+          hidden
+        ></section>
+        <section
+          class="view"
+          id="view-formulas"
+          data-screen="formulas"
+          aria-label="Formula catalogue"
+          hidden
+        ></section>
+        <section
+          class="view"
+          id="view-profile"
+          data-screen="profile"
+          aria-label="Profile and settings"
+          hidden
+        ></section>
+      </main>
+
+      <nav class="nav" aria-label="Main">
+        <button type="button" class="nav-btn on" data-nav="calc" aria-current="page">
+          <span class="nav-ico" aria-hidden="true" data-icon="calculator"></span>
+          <span>Calculator</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="quest">
+          <span class="nav-ico" aria-hidden="true" data-icon="map"></span>
+          <span>Quest</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="formulas">
+          <span class="nav-ico" aria-hidden="true" data-icon="book-open"></span>
+          <span>Formulas</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="profile">
+          <span class="nav-ico" aria-hidden="true" data-icon="cat"></span>
+          <span>Profile</span>
+        </button>
+      </nav>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
