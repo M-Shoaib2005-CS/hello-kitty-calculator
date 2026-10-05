@@ -2,7 +2,7 @@ import { makeLevel, makeQuestion, type PathId } from "../src/quest/generators";
 import { PATHS, isBoss } from "../src/quest/paths";
 import { applyResult, starsFor, levelUnlocked, pathUnlocked, isPassed, questionCount } from "../src/quest/progress";
 import { evalExpr } from "../src/calc/sci";
-import { parseSave, nextStreak, liveStreak, totalStars } from "../src/storage/store";
+import { parseSave, nextStreak, liveStreak, totalStars, exportCode, importCode, HISTORY_MAX } from "../src/storage/store";
 import { FORMULAS, searchFormulas } from "../src/formulas/data";
 import { LESSONS } from "../src/quest/lessons";
 import assert from "node:assert/strict";
@@ -105,5 +105,39 @@ assert.equal(searchFormulas("sin", "trig", []).length > 3, true);
     for (const l of LESSONS[p.id as PathId]) { assert.ok(l.skills.length > 5); assert.equal(l.cards.length, 3); for (const c of l.cards) assert.ok(c.title && c.body.length > 20 && c.example.length > 5); }
   }
   console.log("hints + lessons ok");
+}
+{
+  // new settings fields: safe defaults for saves written by older versions
+  const legacy = parseSave({ muted: true, theme: "night", progress: { "add:1": { stars: 2, best: 6 } } });
+  assert.equal(legacy.haptics, true);
+  assert.equal(legacy.onboarded, false);
+  assert.deepEqual(legacy.history, []);
+  assert.equal(parseSave({ haptics: false, onboarded: true }).haptics, false);
+  // history is sanitised and capped
+  const many = Array.from({ length: 50 }, (_, i) => ({ expr: `${i}+1`, result: `${i + 1}` }));
+  assert.equal(parseSave({ history: [...many, { expr: 5 }, null, "x"] }).history.length, HISTORY_MAX);
+  assert.deepEqual(parseSave({ history: "nope" }).history, []);
+
+  // backup code round-trip, including non-ASCII text
+  const src = parseSave({ progress: { "add:1": { stars: 3, best: 8 }, "mul:4": { stars: 1, best: 4 } }, favourites: ["circle-area", "π-é"], hat: "crown", streak: 4, lastPlay: "2026-10-04", history: many });
+  const code = exportCode(src);
+  assert.ok(code.startsWith("CATU1:"));
+  const back = importCode(`  ${code.slice(0, 20)}\n${code.slice(20)}  `);
+  assert.ok(back);
+  assert.deepEqual(back!.progress, src.progress);
+  assert.deepEqual(back!.favourites, src.favourites);
+  assert.equal(back!.hat, "crown");
+  assert.equal(back!.streak, 4);
+  assert.ok(!("history" in back!) && !("onboarded" in back!), "backup must not carry history or welcome flag");
+  for (const bad of ["", "hello", "CATU1:", "CATU1:@@@", "CATU1:" + Buffer.from("[1,2]").toString("base64"), "CATU1:" + Buffer.from("null").toString("base64"), "CATU2:abcd"]) {
+    const r = importCode(bad);
+    assert.ok(r === null || (Object.keys(r.progress ?? {}).length === 0 && !r.favourites?.length), `bad code accepted: ${bad}`);
+  }
+  assert.equal(importCode("hello"), null);
+  assert.equal(importCode("CATU1:@@@"), null);
+  // a hostile code cannot inject out-of-range stars
+  const evil = importCode("CATU1:" + Buffer.from(JSON.stringify({ progress: { "add:1": { stars: 99, best: -1 } } })).toString("base64"));
+  assert.equal(evil!.progress!["add:1"].stars, 3);
+  console.log("settings, history and backup ok");
 }
 console.log("formulas:", FORMULAS.length, "ALL TESTS PASSED");

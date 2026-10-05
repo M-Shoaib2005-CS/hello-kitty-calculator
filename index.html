@@ -14,10 +14,16 @@
       name="description"
       content="Catularor — a cute offline kitty calculator and maths quest for kids and students."
     />
+    <meta name="apple-mobile-web-app-title" content="Catularor" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
     <title>Catularor</title>
   </head>
   <body>
     <div id="floaties" aria-hidden="true"></div>
+
+    <noscript><p style="padding:24px;font-family:sans-serif;text-align:center">Catularor needs JavaScript to run. Please turn it on and reload.</p></noscript>
 
     <div id="boot" class="boot" role="status" aria-live="polite">
       <div class="boot-card">
@@ -91,6 +97,19 @@
       </nav>
     </div>
 
+    <script nomodule>
+      var s = document.querySelector(".boot-sub");
+      if (s) s.textContent = "This browser is too old for Catularor. Please update it.";
+    </script>
+    <script>
+      // If startup takes unusually long, say so instead of looking frozen.
+      setTimeout(function () {
+        var a = document.getElementById("app");
+        var s = document.querySelector(".boot-sub");
+        var b = document.getElementById("boot");
+        if (a && a.hidden && s && b && !b.dataset.fatal) s.textContent = "Still loading… if this stays, reload the page.";
+      }, 8000);
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

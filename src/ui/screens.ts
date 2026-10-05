@@ -4,7 +4,10 @@ import { HATS, passedCount } from "../quest/progress";
 import { asHat } from "../quest/progress";
 import { icon } from "./icons";
 import { kittySvg } from "./kitty";
-import { liveStreak, totalStars, type SaveState } from "../storage/store";
+import { exportCode, importCode, liveStreak, totalStars, type SaveState } from "../storage/store";
+import { APP_VERSION } from "../version";
+import { canInstall, promptInstall } from "./install";
+import { copyText, toast } from "./toast";
 
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -119,6 +122,10 @@ export function mountProfile(
     onNight: (on: boolean) => void;
     onHat: (id: string) => void;
     onReset: () => void;
+    onHaptics: (on: boolean) => void;
+    onMotion: (on: boolean) => void;
+    onRestore: (partial: Partial<SaveState>) => void;
+    reduceMotion: boolean;
   },
 ): void {
   const { save } = opts;
@@ -126,6 +133,10 @@ export function mountProfile(
   const stars = totalStars(save);
   const streak = liveStreak(save);
   const wearing = asHat(save.hat);
+
+  const row = (id: string, title: string, desc: string, on: boolean): string =>
+    `<div class="toggle-row"><div><strong>${esc(title)}</strong><span>${esc(desc)}</span></div>
+      <button type="button" class="switch ${on ? "on" : ""}" id="${id}" role="switch" aria-checked="${on}" aria-label="${esc(title)}">${on ? "On" : "Off"}</button></div>`;
 
   const hats = HATS.map((h) => {
     const open = stars >= h.stars;
@@ -158,24 +169,33 @@ export function mountProfile(
       <ul class="prog-list">${paths}</ul>
 
       <h3 class="sub">Settings</h3>
-      <div class="toggle-row">
-        <div>
-          <strong>Night kitty</strong>
-          <span>Same cute outlines, moonlit pinks.</span>
-        </div>
-        <button type="button" class="switch ${night ? "on" : ""}" id="themeSwitch" aria-pressed="${night}">
-          ${night ? "On" : "Off"}
-        </button>
+      ${row("themeSwitch", "Night kitty", "Same cute outlines, moonlit pinks.", night)}
+      ${row("soundSwitch", "Sounds", "Little meows when you get things right.", !save.muted)}
+      ${row("hapticSwitch", "Vibration", "A tiny buzz on taps and answers (phones only).", save.haptics)}
+      ${row("motionSwitch", "Calm mode", "Less bouncing and fewer animations.", opts.reduceMotion)}
+      ${
+        canInstall()
+          ? `<div class="toggle-row"><div><strong>Install app</strong><span>Add Catularor to your home screen.</span></div><button type="button" class="switch" id="installBtn">Install</button></div>`
+          : ""
+      }
+
+      <h3 class="sub">Backup</h3>
+      <p class="hint-text">Moving to a new phone? Copy your progress as a code and paste it there.</p>
+      <div class="btn-row">
+        <button type="button" class="chip" id="bkMake">${icon("download", { size: 16 })} Make code</button>
+        <button type="button" class="chip" id="bkRestore">${icon("upload", { size: 16 })} Restore</button>
       </div>
-      <div class="toggle-row">
-        <div>
-          <strong>Sounds</strong>
-          <span>Little meows when you get things right.</span>
-        </div>
-        <button type="button" class="switch ${save.muted ? "" : "on"}" id="soundSwitch" aria-pressed="${!save.muted}">
-          ${save.muted ? "Off" : "On"}
-        </button>
-      </div>
+      <div class="backup" id="bkPanel" hidden></div>
+
+      <h3 class="sub">About</h3>
+      <ul class="about">
+        <li>${icon("shield-check", { size: 18 })}<span>No ads, no tracking, no account. Everything stays on this device.</span></li>
+        <li>${icon("smartphone", { size: 18 })}<span>Works fully offline.</span></li>
+        <li>${icon("info", { size: 18 })}<span>Catularor v${APP_VERSION}</span></li>
+        <li>${icon("heart", { size: 18 })}<span>Made with care for curious kids and students.</span></li>
+      </ul>
+
+      <h3 class="sub">Danger zone</h3>
       <div class="toggle-row">
         <div>
           <strong>Start over</strong>
@@ -188,6 +208,42 @@ export function mountProfile(
 
   root.querySelector("#themeSwitch")?.addEventListener("click", () => opts.onNight(!night));
   root.querySelector("#soundSwitch")?.addEventListener("click", () => opts.onMute(!save.muted));
+  root.querySelector("#hapticSwitch")?.addEventListener("click", () => opts.onHaptics(!save.haptics));
+  root.querySelector("#motionSwitch")?.addEventListener("click", () => opts.onMotion(!opts.reduceMotion));
+  root.querySelector("#installBtn")?.addEventListener("click", () => void promptInstall());
+
+  const panel = root.querySelector<HTMLElement>("#bkPanel")!;
+  root.querySelector("#bkMake")?.addEventListener("click", () => {
+    const code = exportCode(save);
+    panel.hidden = false;
+    panel.innerHTML = `<label class="sr-only" for="bkText">Backup code</label>
+      <textarea id="bkText" readonly rows="4"></textarea>
+      <button type="button" class="wide pink" id="bkCopy">${icon("copy", { size: 18 })} Copy code</button>`;
+    const ta = panel.querySelector<HTMLTextAreaElement>("#bkText")!;
+    ta.value = code;
+    panel.querySelector("#bkCopy")?.addEventListener("click", () => {
+      void copyText(code).then((ok) => toast(ok ? "Backup code copied" : "Long-press the code to copy it"));
+    });
+  });
+  root.querySelector("#bkRestore")?.addEventListener("click", () => {
+    panel.hidden = false;
+    panel.innerHTML = `<label class="sr-only" for="bkText">Paste backup code</label>
+      <textarea id="bkText" rows="4" placeholder="Paste your CATU1:… code here"></textarea>
+      <button type="button" class="wide pink" id="bkGo">Restore progress</button>
+      <p class="hint-text" id="bkMsg" role="status">Restoring replaces the progress on this device.</p>`;
+    panel.querySelector("#bkGo")?.addEventListener("click", () => {
+      const text = panel.querySelector<HTMLTextAreaElement>("#bkText")!.value;
+      const restored = importCode(text);
+      const msg = panel.querySelector<HTMLElement>("#bkMsg")!;
+      if (!restored) {
+        msg.textContent = "That doesn't look like a Catularor backup code.";
+        return;
+      }
+      opts.onRestore(restored);
+      toast("Progress restored");
+    });
+  });
+
   root.querySelector("#resetBtn")?.addEventListener("click", (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     if (btn.dataset.sure === "1") {

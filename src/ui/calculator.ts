@@ -8,8 +8,10 @@ import {
   type Op,
 } from "../calc/basic";
 import { evalExpr, formatNumber, type Angle } from "../calc/sci";
-import type { CalcMode } from "../storage/store";
+import { HISTORY_MAX, type CalcMode, type HistoryItem } from "../storage/store";
+import { buzz } from "../audio/sfx";
 import { icon } from "./icons";
+import { copyText, toast } from "./toast";
 
 const OPS: Record<string, Op> = {
   "+": "+",
@@ -24,6 +26,8 @@ export type CalcOpts = {
   angle: Angle;
   onMode: (m: CalcMode) => void;
   onAngle: (a: Angle) => void;
+  history: HistoryItem[];
+  onHistory: (h: HistoryItem[]) => void;
 };
 
 type SciState = { expr: string; result: string; ans: number; fresh: boolean };
@@ -73,6 +77,43 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
   const sci: SciState = { expr: "", result: "0", ans: 0, fresh: false };
   let mode = opts.mode;
   let angle = opts.angle;
+  let history = opts.history;
+  let showHistory = false;
+
+  const esc = (t: string): string => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const remember = (expr: string, result: string): void => {
+    if (!expr.trim() || result.startsWith("Nya")) return;
+    history = [{ expr, result }, ...history.filter((h) => !(h.expr === expr && h.result === result))].slice(0, HISTORY_MAX);
+    opts.onHistory(history);
+  };
+
+  const basicEquals = (): void => {
+    const had = basic.operation !== null && !basic.shouldReset;
+    const expr = `${basic.previous} ${basic.operation ?? ""} ${basic.current}`;
+    evaluate(basic);
+    if (had) remember(expr, basic.current);
+  };
+
+  const historyPanel = (): string =>
+    `<div class="hist" role="region" aria-label="Calculation history">
+      <div class="hist-head"><strong>History</strong>
+        <span>
+          ${history.length ? `<button type="button" class="chip" data-act="hclear" aria-label="Clear history">${icon("trash", { size: 15 })} Clear</button>` : ""}
+          <button type="button" class="chip" data-act="hclose" aria-label="Close history">${icon("x", { size: 15, sw: 2.6 })} Close</button>
+        </span>
+      </div>
+      ${
+        history.length
+          ? `<ul class="hist-list">${history
+              .map(
+                (h, i) =>
+                  `<li><button type="button" class="hist-item" data-hcopy="${i}" aria-label="Copy ${esc(h.result)}"><span class="he">${esc(h.expr)}</span><span class="hr">= ${esc(h.result)}</span>${icon("copy", { size: 15 })}</button></li>`,
+              )
+              .join("")}</ul>`
+          : `<p class="hist-empty">${icon("paw-print", { size: 28 })}<span>Nothing yet. Do a sum and it lands here.</span></p>`
+      }
+    </div>`;
 
   const sciPad = (): string =>
     `<div class="sci-pad" role="group" aria-label="Scientific functions">${SCI_KEYS.map(
@@ -100,8 +141,10 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
                 ? `<button type="button" class="chip angle" id="angleBtn" aria-label="Angle unit: ${angle === "deg" ? "degrees" : "radians"}. Tap to switch.">${angle === "deg" ? "DEG" : "RAD"}</button>`
                 : ""
             }
+            <button type="button" class="chip hist-btn ${showHistory ? "on" : ""}" data-act="history" aria-pressed="${showHistory}" aria-label="History">${icon("clock", { size: 16 })}</button>
           </div>
-          <div class="display" role="status" aria-live="polite" aria-atomic="true">
+          ${showHistory ? historyPanel() : ""}
+          <div class="display" role="status" aria-live="polite" aria-atomic="true" ${showHistory ? "hidden" : ""}>
             <div class="prev" id="prevDisplay">&nbsp;</div>
             <div class="curr" id="currDisplay">0</div>
           </div>
@@ -171,6 +214,7 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
     if (r.ok) {
       sci.ans = r.value;
       sci.result = formatNumber(r.value);
+      remember(sci.expr, sci.result);
     } else sci.result = r.error;
     sci.fresh = true;
   };
@@ -191,6 +235,26 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
   const onClick = (e: Event): void => {
     const btn = (e.target as HTMLElement).closest("button");
     if (!btn) return;
+    buzz(6);
+
+    const act0 = btn.getAttribute("data-act");
+    if (act0 === "history" || act0 === "hclose") {
+      showHistory = act0 === "history" ? !showHistory : false;
+      render();
+      return;
+    }
+    if (act0 === "hclear") {
+      history = [];
+      opts.onHistory(history);
+      render();
+      return;
+    }
+    const hc = btn.getAttribute("data-hcopy");
+    if (hc !== null) {
+      const item = history[Number(hc)];
+      if (item) void copyText(item.result).then((ok) => toast(ok ? `Copied ${item.result}` : "Couldn't copy"));
+      return;
+    }
 
     const m = btn.getAttribute("data-mode");
     if (m === "basic" || m === "sci") {
@@ -223,7 +287,7 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
     } else {
       if (num !== null) appendDigit(basic, num);
       else if (op && OPS[op]) chooseOp(basic, OPS[op]);
-      else if (act === "eq") evaluate(basic);
+      else if (act === "eq") basicEquals();
       else if (act === "ac") clearAll(basic);
       else if (act === "del") deleteLast(basic);
     }
@@ -259,7 +323,7 @@ export function mountCalculator(root: HTMLElement, opts: CalcOpts): () => void {
       e.preventDefault();
       chooseOp(basic, "÷");
     } else if (k === "%") chooseOp(basic, "%");
-    else if (k === "Enter" || k === "=") evaluate(basic);
+    else if (k === "Enter" || k === "=") basicEquals();
     else if (k === "Backspace") deleteLast(basic);
     else if (k === "Escape") clearAll(basic);
     else return;

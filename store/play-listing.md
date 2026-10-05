@@ -15,6 +15,7 @@ CALCULATOR
 • A big, friendly four-function calculator with a kitty face
 • Switch to Scientific mode: sin, cos, tan and their inverses, ln, log, √, x², xʸ, n!, π, e, brackets and answer memory
 • Degrees or radians, one tap
+• History of your recent sums: tap one to copy the result
 
 MATH QUEST
 • Six story paths with 30 levels each: Addition & Subtraction, Multiplication & Division, Fractions & Decimals, Algebra, Geometry and Trigonometry
@@ -22,6 +23,12 @@ MATH QUEST
 • Earn up to three stars per level. Missing a boss never takes anything away: you just try again
 • Short lessons at the start of every chapter, so you learn before you practise
 • Hints when you are stuck: a nudge first, then two wrong answers removed. Hints never cost stars
+
+EXTRAS
+• Kitty hats to unlock, daily streaks, and a searchable formula book
+• Vibration and calm-mode switches, plus a night theme
+• Move your progress to a new phone with a backup code
+• Works fully offline. No ads, no account, no tracking
 • Fresh questions every time you play, so practice never repeats
 • Collect stars to unlock kitty hats and keep a daily streak
 

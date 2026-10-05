@@ -1,16 +1,21 @@
 import type { ScreenId } from "./router";
 import { copyFor, hashFor, screenFromHash } from "./router";
 import { persist, resetProgress, type SaveState } from "./storage/store";
-import { setMuted, sfx, unlockAudio } from "./audio/sfx";
+import { setHaptics, setMuted, sfx, unlockAudio } from "./audio/sfx";
 import { mountCalculator } from "./ui/calculator";
 import { icon } from "./ui/icons";
 import { mountFormulas, mountProfile } from "./ui/screens";
 import { mountQuest } from "./ui/quest";
+import { onInstallChange, watchInstall } from "./ui/install";
+import { showWelcome } from "./ui/welcome";
 
 export function bootApp(initial: SaveState): void {
   let save = initial;
   applyTheme(save.theme);
+  applyMotion(save.reducedMotion);
   setMuted(save.muted);
+  setHaptics(save.haptics);
+  watchInstall();
 
   const app = document.getElementById("app")!;
   const boot = document.getElementById("boot")!;
@@ -34,6 +39,8 @@ export function bootApp(initial: SaveState): void {
     angle: save.angle,
     onMode: (calcMode) => update({ calcMode }),
     onAngle: (angle) => update({ angle }),
+    history: save.history,
+    onHistory: (history) => update({ history }),
   });
   mountFormulas(views.formulas, { getSave: () => save, update });
 
@@ -55,6 +62,22 @@ export function bootApp(initial: SaveState): void {
       onNight: (on) => {
         update({ theme: on ? "night" : "day" });
         applyTheme(save.theme);
+        paintProfile();
+      },
+      reduceMotion: save.reducedMotion,
+      onHaptics: (haptics) => {
+        update({ haptics });
+        setHaptics(haptics);
+        paintProfile();
+      },
+      onMotion: (on) => {
+        update({ reducedMotion: on });
+        applyMotion(on);
+        paintProfile();
+      },
+      onRestore: (partial) => {
+        update(partial);
+        quest.repaint();
         paintProfile();
       },
       onHat: (hat) => {
@@ -102,6 +125,7 @@ export function bootApp(initial: SaveState): void {
 
   paintMute();
   paintProfile();
+  onInstallChange(() => paintProfile());
 
   muteBtn.addEventListener("click", () => {
     unlockAudio();
@@ -135,6 +159,15 @@ export function bootApp(initial: SaveState): void {
   boot.setAttribute("aria-hidden", "true");
   boot.setAttribute("hidden", "");
   window.setTimeout(() => boot.remove(), 400);
+
+  if (!save.onboarded) {
+    // let the splash finish fading before the welcome card appears
+    window.setTimeout(() => void showWelcome().then(() => update({ onboarded: true })), 450);
+  }
+}
+
+function applyMotion(calm: boolean): void {
+  document.documentElement.dataset.motion = calm ? "calm" : "";
 }
 
 function applyTheme(theme: SaveState["theme"]): void {

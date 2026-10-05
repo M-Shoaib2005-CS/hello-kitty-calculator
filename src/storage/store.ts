@@ -19,7 +19,15 @@ export type SaveState = {
   streak: number;
   /** local date YYYY-MM-DD of the last day a level was finished */
   lastPlay: string;
+  haptics: boolean;
+  /** first-run welcome has been shown */
+  onboarded: boolean;
+  /** newest first, capped at HISTORY_MAX */
+  history: HistoryItem[];
 };
+
+export type HistoryItem = { expr: string; result: string };
+export const HISTORY_MAX = 20;
 
 const KEY = "catularor-save";
 
@@ -35,6 +43,9 @@ const defaults: SaveState = {
   hat: "none",
   streak: 0,
   lastPlay: "",
+  haptics: true,
+  onboarded: false,
+  history: [],
 };
 
 function readRaw(): unknown {
@@ -68,8 +79,22 @@ function progressFrom(v: unknown): Record<string, LevelResult> {
   return out;
 }
 
+function historyFrom(v: unknown): HistoryItem[] {
+  if (!Array.isArray(v)) return [];
+  const out: HistoryItem[] = [];
+  for (const h of v) {
+    if (!h || typeof h !== "object") continue;
+    const o = h as Record<string, unknown>;
+    if (typeof o.expr === "string" && typeof o.result === "string") {
+      out.push({ expr: o.expr.slice(0, 120), result: o.result.slice(0, 40) });
+    }
+    if (out.length >= HISTORY_MAX) break;
+  }
+  return out;
+}
+
 export function parseSave(parsed: unknown): SaveState {
-  if (!parsed || typeof parsed !== "object") return { ...defaults, progress: {}, seenStories: [], favourites: [] };
+  if (!parsed || typeof parsed !== "object") return { ...defaults, progress: {}, seenStories: [], favourites: [], history: [] };
   const o = parsed as Record<string, unknown>;
   return {
     muted: typeof o.muted === "boolean" ? o.muted : defaults.muted,
@@ -83,6 +108,9 @@ export function parseSave(parsed: unknown): SaveState {
     hat: typeof o.hat === "string" ? o.hat : defaults.hat,
     streak: typeof o.streak === "number" && o.streak >= 0 ? Math.floor(o.streak) : 0,
     lastPlay: typeof o.lastPlay === "string" ? o.lastPlay : "",
+    haptics: typeof o.haptics === "boolean" ? o.haptics : defaults.haptics,
+    onboarded: typeof o.onboarded === "boolean" ? o.onboarded : defaults.onboarded,
+    history: historyFrom(o.history),
   };
 }
 
@@ -131,4 +159,48 @@ export function liveStreak(save: SaveState, today: Date = new Date()): number {
   const y = new Date(today);
   y.setDate(y.getDate() - 1);
   return save.lastPlay === dayKey(y) ? save.streak : 0;
+}
+
+/* ---- backup code: a pasteable text copy of the save ---- */
+
+const CODE_PREFIX = "CATU1:";
+
+function toB64(text: string): string {
+  const bytes = new TextEncoder().encode(text);
+  let bin = "";
+  bytes.forEach((b) => (bin += String.fromCharCode(b)));
+  return btoa(bin);
+}
+
+function fromB64(b64: string): string {
+  const bin = atob(b64);
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+/** Only the things worth moving between devices (not history or the welcome flag). */
+export function exportCode(save: SaveState): string {
+  const { progress, seenStories, favourites, hat, streak, lastPlay } = save;
+  return CODE_PREFIX + toB64(JSON.stringify({ progress, seenStories, favourites, hat, streak, lastPlay }));
+}
+
+/** Returns the restored fields, or null if the text is not a valid backup code. */
+export function importCode(text: string): Partial<SaveState> | null {
+  const t = text.trim().replace(/\s+/g, "");
+  if (!t.startsWith(CODE_PREFIX)) return null;
+  try {
+    const parsed = JSON.parse(fromB64(t.slice(CODE_PREFIX.length))) as unknown;
+    if (!parsed || typeof parsed !== "object") return null;
+    const clean = parseSave(parsed);
+    return {
+      progress: clean.progress,
+      seenStories: clean.seenStories,
+      favourites: clean.favourites,
+      hat: clean.hat,
+      streak: clean.streak,
+      lastPlay: clean.lastPlay,
+    };
+  } catch {
+    return null;
+  }
 }

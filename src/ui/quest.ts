@@ -1,4 +1,5 @@
 import { sfx, unlockAudio } from "../audio/sfx";
+import { confetti } from "./confetti";
 import { icon, stars } from "./icons";
 import type { PathId, Question } from "../quest/generators";
 import { LESSONS } from "../quest/lessons";
@@ -289,6 +290,7 @@ export function mountQuest(root: HTMLElement, ctx: QuestCtx): { repaint: () => v
 
     root.innerHTML = `
       <article class="card result">
+        ${out.stars === 3 ? confetti() : ""}
         <div class="badge ${out.passed ? "win" : ""}" aria-hidden="true">${out.passed ? icon("party-popper", { size: 40 }) : icon("paw-print", { size: 40 })}</div>
         <h2>${correct}/${qs.length} right</h2>
         <p class="big-stars" role="img" aria-label="${out.stars} of 3 stars">${stars(out.stars, 38)}</p>

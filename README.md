@@ -26,7 +26,12 @@ npm run preview
 - **Math Quest**: 6 paths × 30 levels (Paw Plus, Times Trail, Slice Valley, Mystery Mountain, Shape Shore, Wave Peak). Each path has 3 story chapters; every 10th level is a boss that needs 2 stars. Questions are generated fresh each play. A path unlocks once the previous path has 10 levels passed. Stars never go down on a retry.
 - **Lessons and hints**: every chapter opens with a 3-card lesson (idea, worked example) that you can reopen from the map or after a failed level. During a question, **Hint** shows a nudge, and a second tap removes two wrong answers. Hints never cost stars.
 - **Formulas**: ~70 searchable cards across 7 categories, with notes, worked examples and favourites.
-- **Profile**: total stars, day streak, kitty hats that unlock with stars, per-path progress, night mode, sound, reset.
+- **Calculator extras**: history of your last 20 sums (tap one to copy its result), and physical-keyboard support.
+- **Profile and settings**: total stars, day streak, kitty hats that unlock with stars, per-path progress, night mode, sound, vibration, calm mode (less animation), install button (web), backup and restore, about, reset.
+- **Backup**: Profile → Backup makes a `CATU1:…` text code of your stars, hats, streak and saved formulas. Paste it into Restore on another device. Restoring replaces the progress on that device.
+- **First run**: a three-step welcome from Mochi, shown once.
+- **If startup ever fails**, the splash turns into a "Try again / Clear saved data and retry" screen showing the error instead of hanging.
+- **Offline web version**: `public/sw.js` + `public/manifest.webmanifest` make the GitHub Pages site installable and usable offline. The service worker is skipped inside the Android app, which already ships its files.
 - Fully offline. Fonts are bundled via `@fontsource`. Everything saves to `localStorage`.
 
 ## Put the web version on GitHub Pages

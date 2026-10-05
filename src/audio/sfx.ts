@@ -16,6 +16,22 @@ export function setMuted(value: boolean): void {
   muted = value;
 }
 
+let haptics = true;
+
+export function setHaptics(value: boolean): void {
+  haptics = value;
+}
+
+/** A tiny vibration where the device supports it (most Android phones). Silent no-op elsewhere. */
+export function buzz(pattern: number | number[] = 8): void {
+  if (!haptics) return;
+  try {
+    navigator.vibrate?.(pattern);
+  } catch {
+    /* some browsers throw before a user gesture */
+  }
+}
+
 export function isMuted(): boolean {
   return muted;
 }
@@ -37,6 +53,7 @@ function tone(f: number, t: number, d: number, type: OscillatorType = "triangle"
 }
 
 export function sfx(kind: "ok" | "win" | "bad" | "tap"): void {
+  buzz(kind === "tap" ? 8 : kind === "ok" ? 14 : kind === "win" ? [20, 40, 20, 40, 40] : [35, 50, 35]);
   if (kind === "tap") {
     tone(640, 0, 0.06, "triangle", 0.05);
     return;
